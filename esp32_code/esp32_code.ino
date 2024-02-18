@@ -1,9 +1,13 @@
 enum comands {
-  Velocity,
+  Velocity = 128,
   Angle,
-  STOP,
+  STOP = 131,
   Movement,
-  ConCheck,
+  UnknownErr = 200,
+  DataErr,
+  ConnectErr,
+  PING,
+  GyroCalibrate,
   NONE
 };
 
@@ -11,19 +15,20 @@ comands currentSTATE = NONE;
 
 long timer = millis();
 
-struct incomingDate {
+struct incomingDate {           //структура для чтения данных
   uint8_t comandCode;
   uint16_t value;
   uint8_t direct;
-  uint8_t second_value;
+  uint16_t second_value;
 };
 
-void reciveDatesFormRos() {
-  if (mySerial.readBytes((byte*)&incomingCommand, sizeof(incomingCommand)))
-  }
+incomingDate incMSG;
+
+void reciveDatesFormRos() {     //читаем пришедшую команду
+  if (Serial.readBytes((byte*)&incMSG, sizeof(incMSG)));
+}
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
 }
 
@@ -31,11 +36,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   reciveDatesFormRos();
 
-  currentSTATE = incomingDate.comandCode;
-
-  switch (currentSTATE) {
+  switch (incMSG.comandCode) {
     case Velocity:
-
+      //Serial.print(incMSG);
       break;
 
     case Angle:
@@ -50,12 +53,12 @@ void loop() {
 
       break;
 
-    case ConCheck:
+    case PING:
 
       break;
 
     case NONE:
-        Serial.write();
+      //Serial.write();
       break;
   }
 
